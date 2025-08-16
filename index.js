@@ -1,11 +1,14 @@
 import express from 'express'
 import { apiRouter } from './routes/apiRoutes.js'
 import cors from 'cors'
-
+import {createTable,seedTable,viewAllUsers} from './database/dbUtility.js'
 const PORT = 8000
 
 const app = express()
 
+await createTable();
+await seedTable();
+await viewAllUsers();
 app.use(cors())
 
 app.use('/api', apiRouter)

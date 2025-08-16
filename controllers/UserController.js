@@ -1,17 +1,27 @@
 import { user } from "../database/db.js";
+import { deleteUserDb, viewAllUsers, viewUser,updateUserById } from '../database/dbUtility.js'
 
-export const getAllUsers = (req, res) => {
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await viewAllUsers();  // get data from DB
+        res.json(users);                     // send data as JSON response
+    } catch (err) {
+        console.error('Error in getAllUsers:', err.message);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
 
-    res.json(user)
 
 }
 
-export const getUser = (req, res) => {
+export const getUser = async (req, res) => {
 
     const { id } = req.params
-    let getUser = user.find(user => user.id === Number(id));
+    // let getUser = user.find(user => user.id === Number(id));
     //console.log(getUser)
-    res.json(getUser)
+    let getUser = await viewUser(id);
+    console.log(getUser)
+    getUser.length > 0  ? res.json(getUser) : res.status(404).json({message:`user with id =  ${id} do not exists`})
+    
 }
 
 export const addUser = (req, res) => {
@@ -31,19 +41,26 @@ export const deleteUserByID = (req, res) => {
 
 
     const { id } = req.params;
-    let filterIndex = user.findIndex(item => item.id !== Number(id))
-    user.splice(filterIndex, 1);
-    res.json(user);
+    // let filterIndex = user.findIndex(item => item.id !== Number(id))
+    // user.splice(filterIndex, 1);
+    deleteUserDb(id)
+    let data = viewAllUsers()
+    res.json(data);
 }
 
 
-export const updateUser = (req, res) => {
-    let userData = user;
+export const updateUser = async (req, res) => {
+    //let userData = user;
     const { name, job, country } = req.query;
     const { id } = req.params;
 
-    userData = userData.map(item => item.id === Number(id) ? { ...item, name, job, country } : item)
+    let data = await updateUserById(name,job,country,id)
 
-    res.json({ message: "User updated", userData })
+    //userData = userData.map(item => item.id === Number(id) ? { ...item, name, job, country } : item)
+    data === true ? 
+    res.json({ message: "User updated", data }) 
+    : 
+    res.status(404).json({message:`user with id =  ${id} do not exists`})
+    
 
 }
