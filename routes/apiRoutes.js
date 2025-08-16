@@ -4,9 +4,9 @@ import { authenticateToken } from '../middleware/auth.js'
 
 export const apiRouter = express.Router()
 
-apiRouter.get('/',getAllUsers);
-apiRouter.post('/user',addUser)
-apiRouter.delete('/delete/:id',deleteUserByID)
-apiRouter.put('/user/:id',updateUser);
-apiRouter.get('/user/:id',getUser)
+apiRouter.get('/',authenticateToken,getAllUsers);
+apiRouter.post('/user',authenticateToken,addUser)
+apiRouter.delete('/delete/:id',authenticateToken,deleteUserByID)
+apiRouter.put('/user/:id',authenticateToken,updateUser);
+apiRouter.get('/user/:id',authenticateToken,getUser)
 apiRouter.post('/login', login)
