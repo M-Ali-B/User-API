@@ -1,5 +1,19 @@
 import { user } from "../database/db.js";
-import { deleteUserDb, viewAllUsers, viewUser,updateUserById } from '../database/dbUtility.js'
+import { deleteUserDb, viewAllUsers, viewUser, updateUserById } from '../database/dbUtility.js'
+import jwt from 'jsonwebtoken'
+const SECRET = 'your_secret_key' // Use env variable in production
+import { members } from '../database/login.js'
+
+
+export const login = (req, res) => {
+    const { username,password } = req.query
+    // Replace with real user lookup
+    const foundUser = members.find(u => u.username === username && u.password === password); 
+    if (!foundUser) return res.status(401).json({ message: 'Invalid credentials' })
+    const token = jwt.sign({ id: foundUser.id, username: foundUser.username }, SECRET, { expiresIn: '1h' })
+    res.json({ token })
+}
+
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -20,8 +34,8 @@ export const getUser = async (req, res) => {
     //console.log(getUser)
     let getUser = await viewUser(id);
     console.log(getUser)
-    getUser.length > 0  ? res.json(getUser) : res.status(404).json({message:`user with id =  ${id} do not exists`})
-    
+    getUser.length > 0 ? res.json(getUser) : res.status(404).json({ message: `user with id =  ${id} do not exists` })
+
 }
 
 export const addUser = (req, res) => {
@@ -54,13 +68,13 @@ export const updateUser = async (req, res) => {
     const { name, job, country } = req.query;
     const { id } = req.params;
 
-    let data = await updateUserById(name,job,country,id)
+    let data = await updateUserById(name, job, country, id)
 
     //userData = userData.map(item => item.id === Number(id) ? { ...item, name, job, country } : item)
-    data === true ? 
-    res.json({ message: "User updated", data }) 
-    : 
-    res.status(404).json({message:`user with id =  ${id} do not exists`})
-    
+    data === true ?
+        res.json({ message: "User updated", data })
+        :
+        res.status(404).json({ message: `user with id =  ${id} do not exists` })
+
 
 }
