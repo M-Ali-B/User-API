@@ -79,6 +79,7 @@ export async function seedMemberTable() {
 
   }
 }
+
 export async function viewAllMembers() {
 const db = await open({
     filename: path.join('database.db'),
@@ -158,7 +159,6 @@ export async function seedTable() {
   }
 }
 
-
 export async function deleteUserDb(id) {
   const db = await open({
     filename: path.join('database.db'),
@@ -183,7 +183,6 @@ export async function deleteUserDb(id) {
     await db.close();
   }
 }
-
 
 export async function viewUser(id) {
 
@@ -211,7 +210,6 @@ export async function viewUser(id) {
   }
 
 }
-
 
 export async function updateUserById(name, job, country, id) {
   const db = await open({
