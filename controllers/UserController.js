@@ -16,13 +16,17 @@ export const login = (req, res) => {
     res.json({ token })
 }
 
-export const signup = (req, res) => {
+export const signup = async (req, res) => {
     const { username,password} = req.query;
-    const insertUser = insertMember(username,password,'user'); // Default role is 'user'
-    if (insertUser) {
-        res.status(201).json({ message: 'User created successfully' });
-    } else {
-        res.status(500).json({ message: 'Error creating user' });
+    const insertUser = await insertMember(username,password,'user'); // Default role is 'user'
+    console.log(insertUser);
+    if (insertUser && insertUser !== "DUPLICATE") {
+       await res.status(201).json({ message: 'User created successfully' });
+    } else if (insertUser === "DUPLICATE") {
+        await res.status(409).json({ message: 'Username already exists' });
+    }
+    else {
+        await  res.status(500).json({ message: 'Error creating user' });
     }
 }
 

@@ -31,11 +31,11 @@ export async function createMemberTable() {
     filename: path.join('database.db'),
     driver: sqlite3.Database
   })
-
+  await db.exec("DROP TABLE IF EXISTS members");
   await db.exec(`
-            CREATE TABLE IF NOT EXISTS members (
+            CREATE TABLE  members (
                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                  username TEXT NOT NULL, 
+                  username TEXT NOT NULL UNIQUE, 
                   password TEXT NOT NULL,
                   role TEXT NOT NULL 
             )
@@ -136,15 +136,26 @@ try {
       )
 
       await db.exec('COMMIT');
+      return true; // 🔑 important: return true to indicate success
 }
 
 catch(err) { 
 await db.exec('ROLLBACK');
+if (err.code === 'SQLITE_CONSTRAINT') { 
+      console.error("❌ Username already exists:", username);
+      return "DUPLICATE"; // 🔑 important: return a specific value for duplicate error
+    } else {
+      console.error("❌ DB Error:", err.message);
+    return false
+    }
+   // throw err; // 🔑 important: rethrow so API can respond with error
 
 }
 
 finally {
     await db.close();
+  
+    viewAllMembers()
 }
 
 }
