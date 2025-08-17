@@ -1,8 +1,8 @@
+import {SECRET, PORT} from './config.js'
 import express from 'express'
 import { apiRouter } from './routes/apiRoutes.js'
 import cors from 'cors'
 import {createTable,seedTable,viewAllUsers,viewAllMembers,seedMemberTable,createMemberTable, clearUserTable, clearMemberTable} from './database/dbUtility.js'
-const PORT = 8000
 
 const app = express()
 
@@ -22,5 +22,7 @@ app.use((req, res) => {
   res.status(404).json({ message: "Endpoint not found. Please check the API documentation." })
 })
 
+console.log("SECRET from .env:", process.env.SECRET);
+console.log("PORT from .env:", process.env.PORT);
 
 app.listen(PORT, () => console.log(`server connected on port ${PORT}`))

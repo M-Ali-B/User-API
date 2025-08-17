@@ -1,8 +1,7 @@
 import { user } from "../database/db.js";
 import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findMembersByCredientials, insertMember } from '../database/dbUtility.js'
 import jwt from 'jsonwebtoken'
-const SECRET = 'your_secret_key' // Use env variable in production
-import { members } from '../database/login.js'
+import {SECRET} from '../config.js'
 
 
 
