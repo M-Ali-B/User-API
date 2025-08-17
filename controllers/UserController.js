@@ -1,5 +1,5 @@
 import { user } from "../database/db.js";
-import { deleteUserDb, viewAllUsers, viewUser, updateUserById } from '../database/dbUtility.js'
+import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findMembersByCredientials } from '../database/dbUtility.js'
 import jwt from 'jsonwebtoken'
 const SECRET = 'your_secret_key' // Use env variable in production
 import { members } from '../database/login.js'
@@ -9,8 +9,9 @@ import { members } from '../database/login.js'
 export const login = (req, res) => {
     const { username,password } = req.query
     // Replace with real user lookup
-    const foundUser = members.find(u => u.username === username && u.password === password); 
-    if (!foundUser) return res.status(401).json({ message: 'Invalid credentials' })
+  //  const foundUser = members.find(u => u.username === username && u.password === password); 
+  const foundUser = findMembersByCredientials(username,password);  
+  if (!foundUser) return res.status(401).json({ message: 'Invalid credentials' })
     const token = jwt.sign({ id: foundUser.id, username: foundUser.username ,role : foundUser.role}, SECRET, { expiresIn: '1h' })
     res.json({ token })
 }

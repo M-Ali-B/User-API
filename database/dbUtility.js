@@ -99,6 +99,28 @@ const db = await open({
 
 }
 
+export async function findMembersByCredientials(username, password) {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  });
+
+  try {
+    const member = await db.get('SELECT * FROM members WHERE username = ? AND password = ?', [username, password]);
+
+    if (!member) {
+      return null;
+    }
+
+    return member;
+
+  } catch (err) {
+    console.error(`Error fetching member with username ${username}:`, err.message);
+  } finally {
+    await db.close();
+  }
+}
+
 export async function viewAllUsers() {
   const db = await open({
     filename: path.join('database.db'),
