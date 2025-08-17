@@ -2,6 +2,7 @@ import { user } from './db.js'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import path from 'node:path'
+import { members } from './login.js';
 
 export let DATA;
 
@@ -23,9 +24,79 @@ export async function createTable() {
       `)
 
   await db.close()
-  console.log('table created')
 }
 
+export async function createMemberTable() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  await db.exec(`
+            CREATE TABLE IF NOT EXISTS members (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  username TEXT NOT NULL, 
+                  password TEXT NOT NULL,
+                  role TEXT NOT NULL 
+            )
+      
+      `)
+
+  await db.close()
+
+}
+
+export async function seedMemberTable() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+
+    await db.exec('BEGIN TRANSACTION')
+
+    for (const { username, password, role } of members) {
+
+      await db.run(`
+        INSERT INTO members (username, password, role)
+        VALUES (?, ?, ?)`,
+        [username, password, role]
+      )
+
+    }
+
+    await db.exec('COMMIT')
+
+  } catch (err) {
+
+    await db.exec('ROLLBACK')
+    console.error('Error inserting data:', err.message)
+
+  } finally {
+
+    await db.close()
+
+  }
+}
+export async function viewAllMembers() {
+const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  });
+
+  try {
+    const members = await db.all('SELECT * FROM members')
+    console.table(members);
+    return members
+
+  } catch (err) {
+    console.error('Error fetching members:', err.message)
+  } finally {
+    await db.close()
+  }
+
+}
 
 export async function viewAllUsers() {
   const db = await open({
@@ -37,7 +108,7 @@ export async function viewAllUsers() {
     const users = await db.all('SELECT * FROM users')
     console.table(users);
     return users
-    
+
     /* Neater table display just for removing extra colums 
  
 // const displayItems = users.map(({ id, name, job ,country }) => {
@@ -74,7 +145,6 @@ export async function seedTable() {
     }
 
     await db.exec('COMMIT')
-    console.log('All records inserted successfully.')
 
   } catch (err) {
 
@@ -84,7 +154,6 @@ export async function seedTable() {
   } finally {
 
     await db.close()
-    console.log('Database connection closed.')
 
   }
 }
@@ -96,7 +165,7 @@ export async function deleteUserDb(id) {
     driver: sqlite3.Database
   })
 
-try {
+  try {
     const result = await db.run(
       `DELETE FROM users WHERE id = ?`,
       [id]  // ✅ parameterized query
@@ -112,7 +181,6 @@ try {
     console.error(`Error deleting user with id ${id}:`, err.message);
   } finally {
     await db.close();
-    console.log('Database connection closed');
   }
 }
 
@@ -125,14 +193,14 @@ export async function viewUser(id) {
   });
 
   try {
-    const singleUser = await db.all('SELECT * FROM users WHERE id = ?',[id])
-   
-    
-if (singleUser.changes === 0) {
+    const singleUser = await db.all('SELECT * FROM users WHERE id = ?', [id])
+
+
+    if (singleUser.changes === 0) {
       console.log(`No user found with id ${id}`);
       return null;
     } else {
-       console.table(singleUser);
+      console.table(singleUser);
       return singleUser
     }
 
@@ -141,22 +209,21 @@ if (singleUser.changes === 0) {
   } finally {
     await db.close()
   }
-  
+
 }
 
 
-export async function updateUserById(name, job, country,id) {
+export async function updateUserById(name, job, country, id) {
   const db = await open({
     filename: path.join('database.db'),
     driver: sqlite3.Database
   });
 
   try {
-    const singleUser = await db.run('UPDATE users SET name = ? , job = ? , country = ? WHERE id = ?',[name,job,country,id])
-   
-    
-if (singleUser.changes === 0) {
-      console.log(`No user found with id ${id}`);
+    const singleUser = await db.run('UPDATE users SET name = ? , job = ? , country = ? WHERE id = ?', [name, job, country, id])
+
+
+    if (singleUser.changes === 0) {
       return null;
     } else {
       return true

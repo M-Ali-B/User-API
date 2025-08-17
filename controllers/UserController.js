@@ -5,12 +5,13 @@ const SECRET = 'your_secret_key' // Use env variable in production
 import { members } from '../database/login.js'
 
 
+
 export const login = (req, res) => {
     const { username,password } = req.query
     // Replace with real user lookup
     const foundUser = members.find(u => u.username === username && u.password === password); 
     if (!foundUser) return res.status(401).json({ message: 'Invalid credentials' })
-    const token = jwt.sign({ id: foundUser.id, username: foundUser.username }, SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ id: foundUser.id, username: foundUser.username ,role : foundUser.role}, SECRET, { expiresIn: '1h' })
     res.json({ token })
 }
 
@@ -31,9 +32,7 @@ export const getUser = async (req, res) => {
 
     const { id } = req.params
     // let getUser = user.find(user => user.id === Number(id));
-    //console.log(getUser)
     let getUser = await viewUser(id);
-    console.log(getUser)
     getUser.length > 0 ? res.json(getUser) : res.status(404).json({ message: `user with id =  ${id} do not exists` })
 
 }
