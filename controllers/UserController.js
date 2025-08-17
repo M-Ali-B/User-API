@@ -1,5 +1,5 @@
 import { user } from "../database/db.js";
-import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findMembersByCredientials } from '../database/dbUtility.js'
+import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findMembersByCredientials, insertMember } from '../database/dbUtility.js'
 import jwt from 'jsonwebtoken'
 const SECRET = 'your_secret_key' // Use env variable in production
 import { members } from '../database/login.js'
@@ -16,6 +16,15 @@ export const login = (req, res) => {
     res.json({ token })
 }
 
+export const signup = (req, res) => {
+    const { username,password} = req.query;
+    const insertUser = insertMember(username,password,'user'); // Default role is 'user'
+    if (insertUser) {
+        res.status(201).json({ message: 'User created successfully' });
+    } else {
+        res.status(500).json({ message: 'Error creating user' });
+    }
+}
 
 export const getAllUsers = async (req, res) => {
     try {

@@ -120,6 +120,34 @@ export async function findMembersByCredientials(username, password) {
     await db.close();
   }
 }
+export async function insertMember(username, password, role) {
+
+const db  = await open({
+  filename : path.join('database.db'),
+  driver: sqlite3.Database
+})
+
+try {
+  await db.exec('BEGIN TRANSACTION');
+    await db.run(`
+      INSERT INTO members (username,password,role)
+      VALUES (?, ?, ?)`,
+      [username,password,role]
+      )
+
+      await db.exec('COMMIT');
+}
+
+catch(err) { 
+await db.exec('ROLLBACK');
+
+}
+
+finally {
+    await db.close();
+}
+
+}
 
 export async function viewAllUsers() {
   const db = await open({
@@ -251,6 +279,36 @@ export async function updateUserById(name, job, country, id) {
 
   } catch (err) {
     console.error(`Error fetching user of ${id}`, err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+export async function clearMemberTable() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  });
+
+  try {
+    const members = await db.all('DELETE FROM members')
+  } catch (err) {
+    console.error('Error ', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+export async function clearUserTable() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  });
+
+  try {
+    const members = await db.all('DELETE FROM users')
+  } catch (err) {
+    console.error('Error ', err.message)
   } finally {
     await db.close()
   }
