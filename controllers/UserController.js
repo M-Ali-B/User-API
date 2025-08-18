@@ -1,4 +1,4 @@
-import { user } from "../database/db.js";
+import { users } from "../Data.js";
 import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findusersByCredientials, insertUser } from '../database/dbUtility.js'
 import jwt from 'jsonwebtoken'
 import {SECRET} from '../config.js'
@@ -58,7 +58,7 @@ export const addUser = (req, res) => {
         job,
         country
     }
-    user.push(addItem);
+    users.push(addItem);
     res.status(200).json({ message: "User added ", length: user.length, user })
 
 }
