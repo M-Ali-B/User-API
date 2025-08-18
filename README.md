@@ -1,4 +1,3 @@
-Here’s a clean **README.md** you can use for your GitHub repo 👇
 
 ---
 
@@ -149,5 +148,3 @@ Server will run on:
 MIT License © 2025
 
 ---
-
-👉 Would you like me to **add diagrams (ERD + table relations)** to this README for better GitHub presentation?
