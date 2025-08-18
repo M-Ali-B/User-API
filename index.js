@@ -1,18 +1,55 @@
-import {SECRET, PORT} from './config.js'
+import { SECRET, PORT } from './config.js'
 import express from 'express'
 import { apiRouter } from './routes/apiRoutes.js'
 import cors from 'cors'
-import {createUsersTable,viewAllUsers, seedUsersTable, createProductTable, seedProductsTable, viewAllProductsTable} from './database/dbUtility.js'
+import { createUsersTable, viewAllUsers, seedUsersTable, createProductTable, seedProductsTable, viewAllProductsTable, createProductAttributeTable, viewAllProductAttributes, createReviewsTable, viewAllReviews, createProductMediaTable, viewAllProductMedia, createCategoriesTable, viewAllCategories, createOrderItemsTable, viewAllOrderItems, createOrdersTable, viewAllOrders, createWishListTable, viewAllWishlist } from './database/dbUtility.js'
+import { seedCategoriesTable, seedOrderItemsTable, seedOrdersTable, seedProductAttributesTable, seedProductMediaTable, seedReviewsTable, seedWishlistTable } from './database/dbSeeders.js'
 
 const app = express()
 
+// creating tables
 
 await createUsersTable();
+await createProductTable()
+await createProductAttributeTable()
+await createReviewsTable()
+await createProductMediaTable()
+await createCategoriesTable()
+await createOrderItemsTable()
+await createOrdersTable()
+await createWishListTable()
+
+// seeding tables with data
+
 await seedUsersTable();
-await viewAllUsers();
-await createProductTable();
 await seedProductsTable()
+await seedProductAttributesTable()
+await seedReviewsTable()
+await seedProductMediaTable()
+await seedCategoriesTable()
+await seedOrderItemsTable()
+await seedOrdersTable()
+await seedWishlistTable()
+
+// viewing data from tables
+console.log('Users Table:');
+await viewAllUsers();
+console.log('Products Table:');
 await viewAllProductsTable()
+console.log('Product Attributes Table:');
+await viewAllProductAttributes()
+console.log('Reviews Table:');
+await viewAllReviews()
+console.log('Product Media Table:');  
+await viewAllProductMedia()
+console.log('Categories Table:'); 
+await viewAllCategories()
+console.log('Order Items Table:');
+await viewAllOrderItems()
+console.log('Orders Table:'); 
+await viewAllOrders()
+console.log('Wishlist Table:');
+await viewAllWishlist();
 
 app.use(cors())
 

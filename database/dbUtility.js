@@ -402,7 +402,7 @@ export async function createWishListTable() {
     filename: path.join('database.db'),
     driver: sqlite3.Database
   })
-  await db.exec("DROP TABLE IF EXISTS reviews");
+  await db.exec("DROP TABLE IF EXISTS wishlist");
   await db.exec(`
           CREATE TABLE wishlist (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -508,4 +508,150 @@ export async function viewAllProductsTable() {
     await db.close()
   }
 
+}
+
+
+
+// 🔹 View Categories
+export async function viewAllCategories() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const categories = await db.all('SELECT * FROM categories')
+    console.table(categories)
+    return categories
+  } catch (err) {
+    console.error('Error fetching categories:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Products
+export async function viewAllProducts() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const products = await db.all('SELECT * FROM products')
+    console.table(products)
+    return products
+  } catch (err) {
+    console.error('Error fetching products:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Product Media
+export async function viewAllProductMedia() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const media = await db.all('SELECT * FROM product_media')
+    console.table(media)
+    return media
+  } catch (err) {
+    console.error('Error fetching product media:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Product Attributes
+export async function viewAllProductAttributes() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const attributes = await db.all('SELECT * FROM product_attributes')
+    console.table(attributes)
+    return attributes
+  } catch (err) {
+    console.error('Error fetching product attributes:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Orders
+export async function viewAllOrders() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const orders = await db.all('SELECT * FROM orders')
+    console.table(orders)
+    return orders
+  } catch (err) {
+    console.error('Error fetching orders:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Order Items
+export async function viewAllOrderItems() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const items = await db.all('SELECT * FROM order_items')
+    console.table(items)
+    return items
+  } catch (err) {
+    console.error('Error fetching order items:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Reviews
+export async function viewAllReviews() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const reviews = await db.all('SELECT * FROM reviews')
+    console.table(reviews)
+    return reviews
+  } catch (err) {
+    console.error('Error fetching reviews:', err.message)
+  } finally {
+    await db.close()
+  }
+}
+
+// 🔹 View Wishlist
+export async function viewAllWishlist() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+    const wishlist = await db.all('SELECT * FROM wishlist')
+    console.table(wishlist)
+    return wishlist
+  } catch (err) {
+    console.error('Error fetching wishlist:', err.message)
+  } finally {
+    await db.close()
+  }
 }
