@@ -2,7 +2,7 @@ import { user } from './db.js'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import path from 'node:path'
-import { members } from './login.js';
+import { members } from './members.js';
 
 export let DATA;
 
