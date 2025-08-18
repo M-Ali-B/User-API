@@ -2,18 +2,18 @@ import {SECRET, PORT} from './config.js'
 import express from 'express'
 import { apiRouter } from './routes/apiRoutes.js'
 import cors from 'cors'
-import {createTable,seedTable,viewAllUsers,viewAllMembers,seedMemberTable,createMemberTable, clearUserTable, clearMemberTable} from './database/dbUtility.js'
+import {createUsersTable,viewAllUsers, seedUsersTable, createProductTable, seedProductsTable, viewAllProductsTable} from './database/dbUtility.js'
 
 const app = express()
 
-await createTable();
-await clearUserTable();
-await seedTable();
+
+await createUsersTable();
+await seedUsersTable();
 await viewAllUsers();
-await createMemberTable();
-await clearMemberTable()
-await seedMemberTable();
-await viewAllMembers();
+await createProductTable();
+await seedProductsTable()
+await viewAllProductsTable()
+
 app.use(cors())
 
 app.use('/api', apiRouter)

@@ -2,38 +2,21 @@ import { user } from './db.js'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import path from 'node:path'
-import { members } from './members.js';
+import { users } from './users.js';
+import { products } from './product.js';
 
 export let DATA;
 
-export async function createTable() {
 
+
+export async function createUsersTable() {
   const db = await open({
     filename: path.join('database.db'),
     driver: sqlite3.Database
   })
-
+  await db.exec("DROP TABLE IF EXISTS users");
   await db.exec(`
-            CREATE TABLE IF NOT EXISTS users (
-                  id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                  name TEXT NOT NULL, 
-                  job TEXT NOT NULL,
-                  country TEXT NOT NULL 
-            )
-      
-      `)
-
-  await db.close()
-}
-
-export async function createMemberTable() {
-  const db = await open({
-    filename: path.join('database.db'),
-    driver: sqlite3.Database
-  })
-  await db.exec("DROP TABLE IF EXISTS members");
-  await db.exec(`
-            CREATE TABLE  members (
+            CREATE TABLE  users (
                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
                   username TEXT NOT NULL UNIQUE, 
                   password TEXT NOT NULL,
@@ -49,7 +32,7 @@ export async function createMemberTable() {
 
 }
 
-export async function seedMemberTable() {
+export async function seedUsersTable() {
   const db = await open({
     filename: path.join('database.db'),
     driver: sqlite3.Database
@@ -59,10 +42,10 @@ export async function seedMemberTable() {
 
     await db.exec('BEGIN TRANSACTION')
 
-    for (const { username, password, role, phone, address, created_at } of members) {
+    for (const { username, password, role, phone, address, created_at } of users) {
 
       await db.run(`
-        INSERT INTO members (username, password, role, phone,address,created_at)
+        INSERT INTO users (username, password, role, phone,address,created_at)
         VALUES (?, ?, ?,?, ?, ?)`,
         [username, password, role, phone, address, created_at]
       )
@@ -83,33 +66,33 @@ export async function seedMemberTable() {
   }
 }
 
-export async function viewAllMembers() {
+export async function viewAllUsers() {
   const db = await open({
     filename: path.join('database.db'),
     driver: sqlite3.Database
   });
 
   try {
-    const members = await db.all('SELECT * FROM members')
-    console.table(members);
-    return members
+    const users = await db.all('SELECT * FROM users')
+    console.table(users);
+    return users
 
   } catch (err) {
-    console.error('Error fetching members:', err.message)
+    console.error('Error fetching users:', err.message)
   } finally {
     await db.close()
   }
 
 }
 
-export async function findMembersByCredientials(username, password) {
+export async function findusersByCredientials(username, password) {
   const db = await open({
     filename: path.join('database.db'),
     driver: sqlite3.Database
   });
 
   try {
-    const member = await db.get('SELECT * FROM members WHERE username = ? AND password = ?', [username, password]);
+    const member = await db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
 
     if (!member) {
       return null;
@@ -123,7 +106,8 @@ export async function findMembersByCredientials(username, password) {
     await db.close();
   }
 }
-export async function insertMember(username, password, role) {
+
+export async function insertUser(username, password, role) {
 
   const db = await open({
     filename: path.join('database.db'),
@@ -133,7 +117,7 @@ export async function insertMember(username, password, role) {
   try {
     await db.exec('BEGIN TRANSACTION');
     await db.run(`
-      INSERT INTO members (username,password,role)
+      INSERT INTO users (username,password,role)
       VALUES (?, ?, ?)`,
       [username, password, role]
     )
@@ -158,69 +142,9 @@ export async function insertMember(username, password, role) {
   finally {
     await db.close();
 
-    viewAllMembers()
+    viewAllusers()
   }
 
-}
-
-export async function viewAllUsers() {
-  const db = await open({
-    filename: path.join('database.db'),
-    driver: sqlite3.Database
-  });
-
-  try {
-    const users = await db.all('SELECT * FROM users')
-    console.table(users);
-    return users
-
-    /* Neater table display just for removing extra colums 
- 
-// const displayItems = users.map(({ id, name, job ,country }) => {
-//   return { id, name, job ,country }
-// })
-return displayItems
-*/
-  } catch (err) {
-    console.error('Error fetching users:', err.message)
-  } finally {
-    await db.close()
-  }
-}
-
-export async function seedTable() {
-
-  const db = await open({
-    filename: path.join('database.db'),
-    driver: sqlite3.Database
-  })
-
-  try {
-
-    await db.exec('BEGIN TRANSACTION')
-
-    for (const { name, job, country } of user) {
-
-      await db.run(`
-        INSERT INTO users (name, job, country)
-        VALUES (?, ?, ?)`,
-        [name, job, country]
-      )
-
-    }
-
-    await db.exec('COMMIT')
-
-  } catch (err) {
-
-    await db.exec('ROLLBACK')
-    console.error('Error inserting data:', err.message)
-
-  } finally {
-
-    await db.close()
-
-  }
 }
 
 export async function deleteUserDb(id) {
@@ -275,7 +199,7 @@ export async function viewUser(id) {
 
 }
 
-export async function updateUserById(name, job, country, id) {
+export async function updateUserById(name, id) {
   const db = await open({
     filename: path.join('database.db'),
     driver: sqlite3.Database
@@ -298,21 +222,6 @@ export async function updateUserById(name, job, country, id) {
   }
 }
 
-export async function clearMemberTable() {
-  const db = await open({
-    filename: path.join('database.db'),
-    driver: sqlite3.Database
-  });
-
-  try {
-    const members = await db.all('DELETE FROM members')
-  } catch (err) {
-    console.error('Error ', err.message)
-  } finally {
-    await db.close()
-  }
-}
-
 export async function clearUserTable() {
   const db = await open({
     filename: path.join('database.db'),
@@ -320,7 +229,7 @@ export async function clearUserTable() {
   });
 
   try {
-    const members = await db.all('DELETE FROM users')
+    const users = await db.all('DELETE FROM users')
   } catch (err) {
     console.error('Error ', err.message)
   } finally {
@@ -399,7 +308,6 @@ export async function createProductMediaTable() {
 
 }
 
-
 export async function createProductAttributeTable() {
   const db = await open({
     filename: path.join('database.db'),
@@ -444,7 +352,6 @@ export async function createOrdersTable() {
 
 }
 
-
 export async function createOrderItemsTable() {
   const db = await open({
     filename: path.join('database.db'),
@@ -466,7 +373,6 @@ export async function createOrderItemsTable() {
   await db.close()
 
 }
-
 
 export async function createReviewsTable() {
   const db = await open({
@@ -491,7 +397,6 @@ export async function createReviewsTable() {
 
 }
 
-
 export async function createWishListTable() {
   const db = await open({
     filename: path.join('database.db'),
@@ -510,5 +415,97 @@ export async function createWishListTable() {
       `)
 
   await db.close()
+
+}
+
+export async function seedProductsTable() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+
+  try {
+
+    await db.exec('BEGIN TRANSACTION')
+
+    for (const {
+      sku,
+      name,
+      description,
+      category_id,
+      brand,
+      price,
+      discount_price,
+      currency,
+      stock,
+      status,
+      created_at,
+      updated_at
+    }
+      of
+      products) {
+
+      await db.run(`
+        INSERT INTO products (
+      sku,
+      name,
+      description,
+      category_id,
+      brand,
+      price,
+      discount_price,
+      currency,
+      stock,
+      status,
+      created_at,
+      updated_at )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+      sku,
+      name,
+      description,
+      category_id,
+      brand,
+      price,
+      discount_price,
+      currency,
+      stock,
+      status,
+      created_at,
+      updated_at]
+      )
+
+    }
+
+    await db.exec('COMMIT')
+
+  } catch (err) {
+
+    await db.exec('ROLLBACK')
+    console.error('Error inserting data:', err.message)
+
+  } finally {
+
+    await db.close()
+
+  }
+}
+
+export async function viewAllProductsTable() {
+  const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  });
+
+  try {
+    const products = await db.all('SELECT * FROM products')
+    console.table(products);
+    return products
+
+  } catch (err) {
+    console.error('Error fetching products:', err.message)
+  } finally {
+    await db.close()
+  }
 
 }

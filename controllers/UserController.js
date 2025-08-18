@@ -1,5 +1,5 @@
 import { user } from "../database/db.js";
-import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findMembersByCredientials, insertMember } from '../database/dbUtility.js'
+import { deleteUserDb, viewAllUsers, viewUser, updateUserById, findusersByCredientials, insertUser } from '../database/dbUtility.js'
 import jwt from 'jsonwebtoken'
 import {SECRET} from '../config.js'
 
@@ -8,8 +8,8 @@ import {SECRET} from '../config.js'
 export const login = (req, res) => {
     const { username,password } = req.query
     // Replace with real user lookup
-  //  const foundUser = members.find(u => u.username === username && u.password === password); 
-  const foundUser = findMembersByCredientials(username,password);  
+  //  const foundUser = users.find(u => u.username === username && u.password === password); 
+  const foundUser = findusersByCredientials(username,password);  
   if (!foundUser) return res.status(401).json({ message: 'Invalid credentials' })
     const token = jwt.sign({ id: foundUser.id, username: foundUser.username ,role : foundUser.role}, SECRET, { expiresIn: '1h' })
     res.json({ token })
@@ -17,11 +17,11 @@ export const login = (req, res) => {
 
 export const signup = async (req, res) => {
     const { username,password} = req.query;
-    const insertUser = await insertMember(username,password,'user'); // Default role is 'user'
-    console.log(insertUser);
-    if (insertUser && insertUser !== "DUPLICATE") {
+    const signupUser = await insertUser(username,password,'user'); // Default role is 'user'
+    console.log(signupUser);
+    if (signupUser && signupUser !== "DUPLICATE") {
        await res.status(201).json({ message: 'User created successfully' });
-    } else if (insertUser === "DUPLICATE") {
+    } else if (signupUser === "DUPLICATE") {
         await res.status(409).json({ message: 'Username already exists' });
     }
     else {
