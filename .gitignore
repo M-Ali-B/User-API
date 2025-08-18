@@ -26,5 +26,7 @@ temp/
 .DS_Store
 Thumbs.db
 
-#DB file
+# All SQLite databases
 *.db
+*.sqlite
+*.sqlite3
