@@ -655,3 +655,22 @@ export async function viewAllWishlist() {
     await db.close()
   }
 }
+
+// view categories with parent-child relationship
+export async function viewCategories() {
+    const db = await open({
+    filename: path.join('database.db'),
+    driver: sqlite3.Database
+  })
+  try {
+    const categories = await db.all(`
+      SELECT c1.id, c1.name AS Product , c2.name AS Category
+      FROM categories c1
+      LEFT JOIN categories c2 ON c1.parent_id = c2.id
+    `);
+    console.table(categories);
+    return categories;
+  } finally {
+    await db.close();
+  }
+}
