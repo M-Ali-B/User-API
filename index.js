@@ -2,7 +2,7 @@ import { SECRET, PORT } from './config.js'
 import express from 'express'
 import { apiRouter } from './routes/apiRoutes.js'
 import cors from 'cors'
-import { createUsersTable, viewCategories,viewAllUsers, seedUsersTable, createProductTable, seedProductsTable, viewAllProductsTable, createProductAttributeTable, viewAllProductAttributes, createReviewsTable, viewAllReviews, createProductMediaTable, viewAllProductMedia, createCategoriesTable, viewAllCategories, createOrderItemsTable, viewAllOrderItems, createOrdersTable, viewAllOrders, createWishListTable, viewAllWishlist } from './database/dbUtility.js'
+import { createUsersTable, viewCategories,viewAllUsers, seedUsersTable, createProductTable, seedProductsTable, viewAllProductsTable, createProductAttributeTable, viewAllProductAttributes, createReviewsTable, viewAllReviews, createProductMediaTable, viewAllProductMedia, createCategoriesTable, viewAllCategories, createOrderItemsTable, viewAllOrderItems, createOrdersTable, viewAllOrders, createWishListTable, viewAllWishlist, viewProductsWithCategories } from './database/dbUtility.js'
 import { seedCategoriesTable, seedOrderItemsTable, seedOrdersTable, seedProductAttributesTable, seedProductMediaTable, seedReviewsTable, seedWishlistTable } from './database/dbSeeders.js'
 
 const app = express()
@@ -50,8 +50,11 @@ console.log('Orders Table:');
 await viewAllOrders()
 console.log('Wishlist Table:');
 await viewAllWishlist();
-console.log('view categories with products')
+console.log('view categories')
 await viewCategories();
+console.log('View Products with categories')
+await viewProductsWithCategories()
+
 
 
 

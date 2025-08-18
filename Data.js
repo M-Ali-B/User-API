@@ -1,17 +1,19 @@
 // 1. Users
 export const users = [
   {
-    name: "Ali Khan",
-    email: "ali@example.com",
+    username: "Ali Khan",
     password: "hashed_password_123",
+    email: "ali@example.com",
+    role: "admin",
     phone: "+92-300-1234567",
     address: "Lahore, Pakistan",
     created_at: "2025-08-18T12:00:00Z"
   },
   {
-    name: "Sara Ahmed",
-    email: "sara@example.com",
+    username: "Sara Ahmed",
     password: "hashed_password_456",
+    email: "sara@example.com",
+    role: "user",
     phone: "+92-321-9876543",
     address: "Karachi, Pakistan",
     created_at: "2025-08-17T10:30:00Z"
@@ -32,7 +34,7 @@ export const products = [
     sku: "LAP-001",
     name: "Dell Inspiron 15",
     description: "15-inch laptop with Intel i5 and 8GB RAM",
-    category_id: 1,
+    category_id: 2,
     brand: "Dell",
     price: 800,
     discount_price: 750,
@@ -46,7 +48,7 @@ export const products = [
     sku: "MOB-001",
     name: "iPhone 14 Pro",
     description: "Apple iPhone 14 Pro 128GB",
-    category_id: 1,
+    category_id: 2,
     brand: "Apple",
     price: 1200,
     discount_price: 1100,

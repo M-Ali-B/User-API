@@ -1,9 +1,7 @@
-import { user } from './db.js'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import path from 'node:path'
-import { users } from './users.js';
-import { products } from './product.js';
+import { products ,users} from '../Data.js';
 
 export let DATA;
 
@@ -20,6 +18,7 @@ export async function createUsersTable() {
                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
                   username TEXT NOT NULL UNIQUE, 
                   password TEXT NOT NULL,
+                  email TEXT UNIQUE,
                   role TEXT NOT NULL,
                   phone TEXT,
                   address TEXT,
@@ -42,12 +41,12 @@ export async function seedUsersTable() {
 
     await db.exec('BEGIN TRANSACTION')
 
-    for (const { username, password, role, phone, address, created_at } of users) {
+    for (const { username, password, email,role, phone, address, created_at } of users) {
 
       await db.run(`
-        INSERT INTO users (username, password, role, phone,address,created_at)
-        VALUES (?, ?, ?,?, ?, ?)`,
-        [username, password, role, phone, address, created_at]
+        INSERT INTO users (username, password, email, role, phone,address,created_at)
+        VALUES (?, ?, ?,?, ?, ?, ?)`,
+        [username, password, email, role, phone, address, created_at]
       )
 
     }
@@ -670,6 +669,33 @@ export async function viewCategories() {
     `);
     console.table(categories);
     return categories;
+  } finally {
+    await db.close();
+  }
+}
+
+export async function viewProductsWithCategories() {
+  const db = await open({
+    filename: path.join("database.db"),
+    driver: sqlite3.Database,
+  });
+
+  try {
+    const rows = await db.all(`
+      SELECT 
+        p.name AS product,
+        c1.name AS category,
+        c2.name AS parent_category
+      FROM products p
+      JOIN categories c1 ON p.category_id = c1.id       
+      LEFT JOIN categories c2 ON c1.parent_id = c2.id;  
+    `);
+
+    console.table(rows);
+    return rows;
+  } catch (err) {
+    console.error("Error fetching products with categories:", err.message);
+    throw err;
   } finally {
     await db.close();
   }
